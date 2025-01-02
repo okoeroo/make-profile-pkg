@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 # make_profile_pkg.py
 #
@@ -98,7 +98,10 @@ def main():
 
     # Grab the profile's identifier for use later in the uninstall_script
     try:
-        pdata = plistlib.readPlist(profile_path)
+        with open(profile_path, 'rb') as f:
+            s = f.read()
+
+        pdata = plistlib.loads(s)
     except ExpatError as e:
         print >> sys.stderr, (
             "Profile is either malformed or signed. Attempting to "
@@ -184,7 +187,7 @@ fi
         install_script += """\n/bin/rm -f %s""" % quote(profile_installed_path)
     with open(script_path, "w") as fd:
         fd.write(install_script)
-    os.chmod(script_path, 0755)
+    os.chmod(script_path, 0o755)
 
     # thanks, frogor
     cmd = [pkgbuild,
