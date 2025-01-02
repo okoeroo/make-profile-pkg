@@ -170,7 +170,7 @@ def main():
 
     install_script = """#!/bin/sh
 if [ "$3" = "/" ] ; then
-    /usr/bin/profiles -I -F %s %s
+    /usr/bin/profiles install -path %s %s
 else
     /bin/mkdir -p "$3/private/var/db/ConfigurationProfiles/Setup"
     /bin/cp %s %s
@@ -207,7 +207,7 @@ fi
     uninstall_script_path = os.path.join(output_dir, "%s_uninstall.sh" % item_name)
     uninstall_script = """#!/bin/sh
 
-/usr/bin/profiles -R -p %s
+/usr/bin/profiles remove -identifier %s
 /bin/rm -f %s
 /usr/sbin/pkgutil --forget %s
 """ % (quote(profile_identifier), quote(profile_installed_path), quote(pkg_identifier))
@@ -230,7 +230,7 @@ PROFILE_ID="%s"
 # The version installed from pkgutil
 VERSION_INSTALLED=`/usr/sbin/pkgutil --pkg-info "$PKG_ID" | grep version | sed 's/^[^:]*: //'`
 
-if ( /usr/bin/profiles -P | /usr/bin/grep -q $PROFILE_ID ); then
+if ( /usr/bin/profiles list | /usr/bin/grep -q $PROFILE_ID ); then
     # Profile is present, check the version
     if [ "$VERSION_INSTALLED" = "$PKG_VERSION" ]; then
         # Correct version, all good
